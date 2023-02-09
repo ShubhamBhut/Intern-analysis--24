@@ -30,23 +30,25 @@ df[SGPA4] = df[SGPA4].map(update_gpa)
 df[CGPA] = df[CGPA].map(update_gpa)
 
 st.markdown("## First let's have a overview of general data")
-st.markdown(f"* ##### The :blue[median SGPA] of 4th semester is :green[{df.median()[1]}]")
-st.markdown(f"* ##### The median CGPA is {round(df.median()[2], 2)}")
-st.markdown(f"* ##### The median stipend is {df.median()[4]}")
+st.markdown(f"* The :blue[median SGPA] of 4th semester is :green[{df.median()[1]}]")
+st.markdown(f"* The median CGPA is {round(df.median()[2], 2)}")
+st.markdown(f"* The median stipend is {df.median()[4]}")
 count = (df['Stipend'] > 0).sum()
-st.markdown(f"* ##### Count of students with paid Interns are {count}, almost {round((count/df.shape[0])*100, 2)}%")
+st.markdown(f"* Count of students with paid Interns are {count}, almost {round((count/df.shape[0])*100, 2)}%")
 
 st.markdown(" ##### Stipend Median is 0, that means less than 50% students has paid intern. This is horrible. Don't know who to blame here ICC, P&C department, online education or students. I would say all partially, but more goes to ICC and P&C.")
 
 st.markdown("### Now let's have a look at mean of data")
 general_describe = df[['Stipend', 'CGPA', 'SGPA']].describe()
 st.write(general_describe)
-st.markdown(" ##### As shown above, the average stipend is 21880 and average GPA is 5.18. However the reason behind this is 0 GPA of failed student. These failed students are pulling average GPA down. That means all the passed students must have high GPA, more than 8. let's check")
+#fig = px.box(df[df["Stipend"] > 0], x = "Stipend")
+#st.plotly_chart(fig)
+st.markdown(" As shown above, the average stipend is 21880 and average GPA is 5.18. However the reason behind this is 0 GPA of failed student. These failed students are pulling average GPA down. That means all the passed students must have high GPA, more than 8. let's check")
 
 df_passed = df[df['CGPA'] > 0]
 passed_describe = df_passed[['Stipend', 'CGPA', 'SGPA']].describe()
 st.write(passed_describe)
-st.markdown(' ##### Now look, average CGPA for all passed students is 8.5. A little more competitive. Have a look at Stipend now - its almost 31000. Not bad for 2 years of JEE prep.')
+st.markdown(' Now look, average CGPA for all passed students is 8.5. A little more competitive. Have a look at Stipend now - its almost 31000. Not bad for 2 years of JEE prep.')
 
 st.markdown("### Now let's check from where how much stipend came")
 
@@ -56,20 +58,20 @@ st.plotly_chart(fig, use_container_width=True)
 fig = px.histogram(df, x='Stipend', y='Mode', histfunc='sum')
 st.plotly_chart(fig, use_container_width=True)
 
-st.markdown("##### So frequency wise oncampus and offcampus are quite same, but oncampus(22.5 mil) brought a ton of more stipend than offcampus(300k), if you think offcampus is just grabage, let me clear this for you. The reason for super low stipend by off campus is that a lot of people displaying offcampus internships are jugaad (in relative's campany or through a relative/friend) which is unpaid.")
+st.markdown(" So frequency wise oncampus and offcampus are quite same, but oncampus(22.5 mil) brought a ton of more stipend than offcampus(300k), if you think offcampus is just grabage, let me clear this for you. The reason for super low stipend by off campus is that a lot of people displaying offcampus internships are jugaad (in relative's campany or through a relative/friend) which is unpaid.")
 
 st.markdown("#### Let's have a look at stats with and without these jugaad noise")
 df_onCampus = df.loc[df['Mode'] == "T&P"]
-df_onCampus.describe()
-st.markdown("##### It seems that Stipend wise oncampus is a ,uch better option with average Stipend around 44000. I will be honest, there are some factors which has pushed this number, but stil oncampus stipend is good.")
+st.write(df_onCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown(" It seems that Stipend wise oncampus is a much better option with average Stipend around 44000. I will be honest, there are some factors which has pushed this number, but stil oncampus stipend is good.")
 
 df_offCampus = df.loc[df['Mode'] == "SELF"]
-df_offCampus.describe()
-st.markdown("##### It seems total offcampus internships are 40 with mean Stipend 7500. Total shit, but let's look after removing these jugaadis.")
+st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown("It seems total offcampus internships are 40 with mean Stipend 7500. Total shit, but let's look after removing these jugaadis.")
 
 df_offCampus = df_offCampus[df_offCampus['Stipend'] > 0]
-df_offCampus.describe()
-st.markdown("##### Now have a look, average stipend for offcampus is now 37500, not bad. But look at frequency(count), only 8 people have offcampus paid internships, that means around 32 people in CS are jugaadi, shameful. Also it requires skills to get offcampus paid intern.")
+st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown("Now have a look, average stipend for offcampus is now 37500, not bad. But look at frequency(count), only 8 people have offcampus paid internships, that means around 32 people in CS are jugaadi, shameful. Also it requires skills to get offcampus paid intern.")
 
 st.markdown("## Now let's have a look on GPA's relation with Interns")
 st.markdown('#### Scatter plot of CGPA vs Stipend, with Mode as color')
@@ -122,23 +124,23 @@ df_female = df[df['gender'] == 'F']
 st.markdown(f"total males with stipend > 0 are {df_male[df_male['Stipend'] > 0].count()[0]} and {100*(41/92)}% of all males")
 st.markdown(f"total females with stipend > 0 are {df_female[df_female['Stipend'] > 0].count()[0]} and {100*(16/25)}% of all females")
 
-df_male.describe()
-df_female.describe()
+st.write(df_male[['Stipend', 'CGPA', 'SGPA']].describe())
+st.write(df_female[['Stipend', 'CGPA', 'SGPA']].describe())
 
 st.markdown("""Surprisingly average CGPA is higher in males still average stipend is higher in females. Also percentage wise stats are a lot better in females. Let's try to find reasons behind this""")
 
 df_male_passed = df_passed[df_passed['gender'] == 'M']
 df_female_passed = df_passed[df_passed['gender'] == 'F']
 
-df_male_passed.describe()
-df_male_passed.describe()
+st.write(df_male_passed[['Stipend', 'CGPA', 'SGPA']].describe())
+st.write(df_male_passed[['Stipend', 'CGPA', 'SGPA']].describe())
 
 st.markdown("""Still better CGPA in males, also increase in female stipend is more than increase in male stipend.
 
 As we know, mean can pe affected by a couple of extreme inputs. So let's check if there is anything like this hered. Also here our previous insight regarding higher CGPA means higher stipend seems to be wrong, let's study this as well""")
 
 st.markdown("#### CGPA vs Stipend but now with gender as colors")
-fig = px.bar(df, x="CGPA", y="Stipend", color="gender")
+fig = px.bar(df, x="CGPA", y="Stipend", color="gender", color_discrete_sequence=px.colors.qualitative.Plotly)
 fig.update_layout(template="plotly_dark")
 st.plotly_chart(fig, use_container_width=True)
 
@@ -147,10 +149,10 @@ st.markdown("But what could be the reason behind this ? let's see if most female
 
 st.markdown("### CGPA box plots with genders as colors")
 st.markdown("### All students")
-fig = px.box(df, color="gender", y='CGPA')
+fig = px.box(df, color="gender", y='CGPA', color_discrete_sequence=px.colors.qualitative.Plotly)
 st.plotly_chart(fig, use_container_width=True)
 st.markdown("### Passed Students")
-fig = px.box(df_passed, color="gender", y='CGPA')
+fig = px.box(df_passed, color="gender", y='CGPA', color_discrete_sequence=px.colors.qualitative.Plotly)
 st.plotly_chart(fig, use_container_width=True)
 st.markdown("Nah, GPA is almost same in case of both genders, sure highest GPA is by a male and lowest by a female; but median and rest student's distribution is almost same")
 
@@ -167,7 +169,7 @@ st.markdown("""Above chart again made a lot of things clear. Look the range of o
 
 Still let's confirm it with other plots to be safe""")
 
-fig = px.box(df, x="Mode", y="Stipend", color="gender")
+fig = px.box(df, x="Mode", y="Stipend", color="gender", color_discrete_sequence=px.colors.qualitative.Plotly)
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("""Look, out of 8 offcampus jobs atleast 5 are by males and 2 of them have nice stipend while females have totally struggled there. In case of Oncampus, you would see bigger blue shape and say males seem to have better condition, but nope! Some highest GPA holders and most skilled males have pushed it (As we saw previously) like, compare the mean and median. Despite have extreme cases on male data, still males are struggling in mean and median, which are real indicators when it comes to compering groups.""")
@@ -176,14 +178,14 @@ st.markdown("We still haven't found any reason behind higher stipend in females 
 
 st.markdown("### Again linear regression estimation of Stipend, but this time genderwise")
 df_7to10 = df[df['CGPA'] > 7]
-fig = px.scatter(df_7to10, x="CGPA", y="Stipend", trendline="ols", color='gender')
+fig = px.scatter(df_7to10, x="CGPA", y="Stipend", trendline="ols", color='gender', color_discrete_sequence=px.colors.qualitative.Plotly)
 fig.update_layout(template="plotly_dark")
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("### Let's remove extreme data and then check")
 
 df_7to10 = df[(df['CGPA'] > 7) & (df['CGPA'] < 9.6)]
-fig = px.scatter(df_7to10, x="CGPA", y="Stipend", trendline="ols", color='gender')
+fig = px.scatter(df_7to10, x="CGPA", y="Stipend", trendline="ols", color='gender', color_discrete_sequence=px.colors.qualitative.Plotly)
 fig.update_layout(template="plotly_dark")
 st.plotly_chart(fig, use_container_width=True)
 
