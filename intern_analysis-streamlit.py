@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
 
-st.header("The Intern data analysis of NITKKR'24 batch")
-
-st.selectbox('Please selct the branch: ', ('CSE', 'IT'))
+st.header("The Intern data analysis of CS NITKKR'24 batch")
 
 #if branch==CS, df = '' elif branch=='IT', df==
 
@@ -40,14 +38,16 @@ st.markdown(" ##### Stipend Median is 0, that means less than 50% students has p
 
 st.markdown("### Now let's have a look at mean of data")
 general_describe = df[['Stipend', 'CGPA', 'SGPA']].describe()
-st.write(general_describe)
+st.markdown("###### All students description: ")
+st.write(general_describe[:3])
 #fig = px.box(df[df["Stipend"] > 0], x = "Stipend")
 #st.plotly_chart(fig)
 st.markdown(" As shown above, the average stipend is 21880 and average GPA is 5.18. However the reason behind this is 0 GPA of failed student. These failed students are pulling average GPA down. That means all the passed students must have high GPA, more than 8. let's check")
 
 df_passed = df[df['CGPA'] > 0]
 passed_describe = df_passed[['Stipend', 'CGPA', 'SGPA']].describe()
-st.write(passed_describe)
+st.markdown("###### passed students description: ")
+st.write(passed_describe[:3])
 st.markdown(' Now look, average CGPA for all passed students is 8.5. A little more competitive. Have a look at Stipend now - its almost 31000. Not bad for 2 years of JEE prep.')
 
 st.markdown("### Now let's check from where how much stipend came")
@@ -62,20 +62,23 @@ st.markdown(" So frequency wise oncampus and offcampus are quite same, but oncam
 
 st.markdown("#### Let's have a look at stats with and without these jugaad noise")
 df_onCampus = df.loc[df['Mode'] == "T&P"]
-st.write(df_onCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown("###### All OnCampus: ")
+st.write(df_onCampus[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
 st.markdown(" It seems that Stipend wise oncampus is a much better option with average Stipend around 44000. I will be honest, there are some factors which has pushed this number, but stil oncampus stipend is good.")
 
 df_offCampus = df.loc[df['Mode'] == "SELF"]
-st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown("###### All OffCampus: ")
+st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
 st.markdown("It seems total offcampus internships are 40 with mean Stipend 7500. Total shit, but let's look after removing these jugaadis.")
 
 df_offCampus = df_offCampus[df_offCampus['Stipend'] > 0]
-st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe())
+st.markdown("###### All paid OffCampus:")
+st.write(df_offCampus[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
 st.markdown("Now have a look, average stipend for offcampus is now 37500, not bad. But look at frequency(count), only 8 people have offcampus paid internships, that means around 32 people in CS are jugaadi, shameful. Also it requires skills to get offcampus paid intern.")
 
 st.markdown("## Now let's have a look on GPA's relation with Interns")
 st.markdown('#### Scatter plot of CGPA vs Stipend, with Mode as color')
-fig = px.scatter(df, x='CGPA', y='Stipend', color='Mode', opacity=0.3)
+fig = px.scatter(df, x='CGPA', y='Stipend', color='Mode', opacity=0.4)
 fig.update_traces(marker=dict(size=10, sizemode='diameter', sizeref=0.1))
 fig.update_layout(template="plotly_dark")
 st.plotly_chart(fig, use_container_width=True)
@@ -124,17 +127,19 @@ df_female = df[df['gender'] == 'F']
 st.markdown(f"total males with stipend > 0 are {df_male[df_male['Stipend'] > 0].count()[0]} and {100*(41/92)}% of all males")
 st.markdown(f"total females with stipend > 0 are {df_female[df_female['Stipend'] > 0].count()[0]} and {100*(16/25)}% of all females")
 
-st.write(df_male[['Stipend', 'CGPA', 'SGPA']].describe())
-st.write(df_female[['Stipend', 'CGPA', 'SGPA']].describe())
-
+st.markdown("###### All boys: ")
+st.write(df_male[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
+st.markdown("###### All girls: ")
+st.write(df_female[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
 st.markdown("""Surprisingly average CGPA is higher in males still average stipend is higher in females. Also percentage wise stats are a lot better in females. Let's try to find reasons behind this""")
 
 df_male_passed = df_passed[df_passed['gender'] == 'M']
 df_female_passed = df_passed[df_passed['gender'] == 'F']
 
-st.write(df_male_passed[['Stipend', 'CGPA', 'SGPA']].describe())
-st.write(df_male_passed[['Stipend', 'CGPA', 'SGPA']].describe())
-
+st.markdown("###### All passed boys: ")
+st.write(df_male_passed[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
+st.markdown("###### All passed girls: ")
+st.write(df_female_passed[['Stipend', 'CGPA', 'SGPA']].describe()[:3])
 st.markdown("""Still better CGPA in males, also increase in female stipend is more than increase in male stipend.
 
 As we know, mean can pe affected by a couple of extreme inputs. So let's check if there is anything like this hered. Also here our previous insight regarding higher CGPA means higher stipend seems to be wrong, let's study this as well""")
@@ -155,6 +160,14 @@ st.markdown("### Passed Students")
 fig = px.box(df_passed, color="gender", y='CGPA', color_discrete_sequence=px.colors.qualitative.Plotly)
 st.plotly_chart(fig, use_container_width=True)
 st.markdown("Nah, GPA is almost same in case of both genders, sure highest GPA is by a male and lowest by a female; but median and rest student's distribution is almost same")
+
+st.markdown("### Box plot of Stipends in common range of CGPA (7 to 9)")
+df_7to10 = df[(df['CGPA'] > 7) & (df['CGPA'] < 9)]
+fig = px.box(df_7to10,  y="Stipend", color='gender', color_discrete_sequence=px.colors.qualitative.Plotly)
+fig.update_layout(template="plotly_dark")
+st.plotly_chart(fig, use_container_width=True)
+st.markdown("Nothing is as happy as it seems, especially for boys. Median stipend is 0 while for girls it is 30,000. Also the distribution after median shows insane stipend gap is, boys q3 is same as girls median.")
+st.markdown("Also note that you need better GPA in order to get good stipend here as generally everyone has good GPA.")
 
 st.markdown("#### Lineplot of CGPA vs Stipend with Gender as color and in CGPA range [8-10]")
 fig, ax = plt.subplots(figsize=(10, 5))
